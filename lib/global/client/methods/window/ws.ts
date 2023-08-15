@@ -39,7 +39,15 @@ export default function websocket(self: Window | any) {
     },
   });
 
-  self.WebSocket = self.__dynamic.wrap(
+  self.WebSocket = new Proxy(self.WebSocket, {
+    construct(t: Function, a: Array<string>) {
+      console.log(a);
+      return self.__dynamic.bare.createWebSocket(a[0], a[1], {
+        webSocketImpl: t,
+      });
+    }
+  });
+  self.__dynamic.wrap(
     self.WebSocket,
     (e: any, ...args: Array<string | Array<string>>) => {
       console.log(args);
